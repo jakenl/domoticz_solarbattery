@@ -8,6 +8,9 @@ A solar battery is used to balance energy production and consumption
 - Add or subtract this difference to/from the solar battery.
 - When the solar battery is at max capacity or is empty, no more solar energy can be stored or used. This is lost energy
 
+**Prerequisities**
+- An existing energy meter in Domoticz. This may be a P1-meter or 2 seperate energy meters for consumption from the grid and production to the grid.
+
 **3 devices need to be added**
 - a custom sensor that only displays the current value of the solar battery: important to see min, avg and max values over the days
 - a P1-meter that shows within 1 device power and energy usage of the solar battery
@@ -16,6 +19,10 @@ A solar battery is used to balance energy production and consumption
 **2 Domoticz user variables need to be added**
 - The capacity of the the simulated battey
 - The maximum power of the similated inverter for the battery 
+
+**Script**
+- Download the script
+- Place the script in the folder: \domoticz\scripts\dzVents\scripts
 
 **Solar battery devices**
 ![devices](https://user-images.githubusercontent.com/16058266/113413398-e7609a00-93ba-11eb-8399-5ba66eaea13d.JPG)
