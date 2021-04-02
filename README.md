@@ -1,4 +1,4 @@
-# domoticz Simulated Solar Battery
+# Domoticz Simulated Solar Battery
 LUA script to control a simulated battery for storage and consumption of (self-) generated energy
 
 A solar battery is used to balance energy production and consumption
