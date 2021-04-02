@@ -17,6 +17,9 @@ A solar battery is used to balance energy production and consumption
 - The capacity of the the simulated battey
 - The maximum power of the similated inverter for the battery 
 
+**Solar battery devices**
+![devices](https://user-images.githubusercontent.com/16058266/113413398-e7609a00-93ba-11eb-8399-5ba66eaea13d.JPG)
+
 **Solar battery log file**
 
 Interesting analysis: in the summer months the consumption is only 2-3kWh per day, a bigger battery has no value. in the winter months the production is so low that the full mark is never reached.
