@@ -13,7 +13,12 @@ A solar battery is used to balance energy production and consumption
 - a P1-meter that shows within 1 device power and energy usage of the solar battery
 - an electricity meter that shows the lost power and energy due to a full and empty battery
 
+**2 Domoticz user variables need to be added**
+- The capacity of the the simulated battey
+- The maximum power of the similated inverter for the battery 
+
 **Solar battery log file**
+
 Interesting analysis: in the summer months the consumption is only 2-3kWh per day, a bigger battery has no value. in the winter months the production is so low that the full mark is never reached.
 ![SolarBattery](https://user-images.githubusercontent.com/16058266/113411981-6fdd3b80-93b7-11eb-9ee9-2101f5e86430.JPG)
 
