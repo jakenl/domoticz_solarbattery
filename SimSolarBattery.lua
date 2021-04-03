@@ -1,4 +1,5 @@
 --version 0.1 02-04-2021: dzVents version of solar battery script
+--version 0.1.1	03-04-2021: fix left behind variable and avoidance of power level > max inverter power level, due to rounding of calculation
 
 --To be created virtual devices in the hardware section of Domoticz:
 	local solarBattery_name = 'Virtual Solar Battery'			-- (1) Virtual 'Custom Sensor' device name for the 'Virtual Solar Battery'. Change axis label to kWh
@@ -110,7 +111,6 @@ return {
 	elseif (lostEnergy.deviceType ~= 'General' and lostEnergy.deviceSubType ~= "kWh") then
 		domoticz.log('created device '.. lostEnergy_name ..'	is not of the type RFXMeter. Script will end. Please add the correct device(type) to Domoticz', domoticz.LOG_ERROR)
 		goto endScript
-	lostEnergy
 	end
 
 --check if variables are the right type and contain a good value
@@ -216,10 +216,12 @@ return {
 		inverterLostEnergy = maxBbatteryInverterEnergy - energyBalance
 		domoticz.log('Positive energybalance above max inverter capacity. inverterLostEnergy = '.. maxBbatteryInverterEnergy ..' - ' ..energyBalance .. ' = ' .. inverterLostEnergy, domoticz.LOG_DEBUG)
 		energyBalance = maxBbatteryInverterEnergy
+		batteryProdWatt = battery_inverter_power.value
 	elseif energyBalance < (-1 * maxBbatteryInverterEnergy) then -- more consumption than inverter can deliver
 		inverterLostEnergy = (-1 * energyBalance ) - maxBbatteryInverterEnergy
 		domoticz.log('Negative Energybalance below max inverter capacity. inverterLostEnergy = '.. -1 *energyBalance ..' - ' ..maxBbatteryInverterEnergy .. ' = ' .. inverterLostEnergy, domoticz.LOG_DEBUG)
 		energyBalance = -1 * maxBbatteryInverterEnergy
+		batteryUsedWatt = battery_inverter_power.value
 	else
 		inverterLostEnergy = 0
 		domoticz.log('Energy balance within capacity of battery inverter', domoticz.LOG_DEBUG)
@@ -278,8 +280,8 @@ return {
 	domoticz.log('inverterLostEnergy = '..inverterLostEnergy .. 'Wh',domoticz.LOG_DEBUG)
 	
 --calculate battery power, based on battery energy
-	batteryUsedWatt = _.round (batteryUsedEnergy * (3600/deltaTime), 0)
-	batteryProdWatt = _.round (batteryProdEnergy * (3600/deltaTime), 0)
+	if batteryUsedWatt == nil then batteryUsedWatt = _.round (batteryUsedEnergy * (3600/deltaTime), 0) end
+	if batteryProdWatt == nil then batteryProdWatt = _.round (batteryProdEnergy * (3600/deltaTime), 0) end
 
 ---update devices
 	--update battery level with new value
