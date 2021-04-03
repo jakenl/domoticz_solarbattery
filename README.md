@@ -16,6 +16,7 @@ A solar battery is used to balance energy production and consumption. A battery,
 - Measuring of energy losses due to an empty battery can be turned on and off.
 
 **Device log analysis**
+
 Some analysis can be done straight from the produced graphs by Domoticz, for other analysis it is better to export the results to a spreadsheet program instead. For a better insight, it is recommended to only start analysing after some months, ideally after a full year of running the script.
 
 - The Solar Battery log will show how often the battery reaches it maximum capacity. Equally important are also the times when the battery is not emptied over a 24hr period and the times where there is not enough energy generated to reach the maximum capacity. A big battery will prevent some losses when multiple days need to be covered by a low energy production. However, this is very costly in purchasing such a battery and the benefits might be limited to just a few days a year
@@ -47,6 +48,7 @@ Interesting analysis: The 5kWh capacity can be seen many months in the year. How
 ![SolarBattery](https://user-images.githubusercontent.com/16058266/113411981-6fdd3b80-93b7-11eb-9ee9-2101f5e86430.JPG)
 
 **Solar battery usage**
+
 The new virtual P1-meter is only used for 2 (not very energy productive) days. Therefore the simulated inverter power of 1000W is not visible as a flat line at 1000W during peak moments. 
 ![SolarBatteryUsage](https://user-images.githubusercontent.com/16058266/113412143-d2363c00-93b7-11eb-8bd6-6ae93dd24833.JPG)
 
