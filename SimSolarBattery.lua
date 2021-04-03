@@ -7,7 +7,7 @@
 	local lostEnergy_name = 'Lost Solar Energy'				-- (3) Virtual 'Electric Instant + Counter' device name for the 'Lost Solar Energy'
 
 --To be created User Variable in the Setup - More Options - User Variable section:
-	local battery_capacity_name = 'SolarBatteryCapacity2'			-- (4) User Variable name for the 'Solar Battery Capacity'. Type 'Integer'. Value in Wh (4kWh battery = '4000')
+	local battery_capacity_name = 'SolarBatteryCapacity'			-- (4) User Variable name for the 'Solar Battery Capacity'. Type 'Integer'. Value in Wh (4kWh battery = '4000')
 	local battery_inverter_power_name = 'SolarBatteryInverterCap'	-- (5) User variable name for the 'Solar Battery Inverter Power'. Type 'Integer'. Value in W
 
 --Energy meter(s) management
@@ -49,7 +49,7 @@ return {
 	},
 	logging = {
 	level = domoticz.LOG_DEBUG, --domoticz.LOG_INFO, domoticz.LOG_MODULE_EXEC_INFO, domoticz.LOG_DEBUG or domoticz.LOG_ERROR
-	marker = "Hey solar"
+	marker = "Hey solar battery"
 	},
 
 	execute = function(domoticz, device)
