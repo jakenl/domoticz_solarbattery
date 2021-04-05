@@ -1,5 +1,6 @@
 --version 0.1 02-04-2021: dzVents version of solar battery script
 --version 0.1.1	03-04-2021: fix left behind variable and avoidance of power level > max inverter power level, due to rounding of calculation
+--version 0.1.2 04-04-2021: changed a check for latest data storage from seconds to milliseconds to accommodate meters that update every second
 
 --To be created virtual devices in the hardware section of Domoticz:
 	local solarBattery_name = 'Virtual Solar Battery'			-- (1) Virtual 'Custom Sensor' device name for the 'Virtual Solar Battery'. Change axis label to kWh
@@ -163,7 +164,7 @@ return {
 	--check if the script should continue, based on given scriptInterval timer
 	--check timestamp from persistent data
 
-	deltaTime = domoticz.data.consumedEnergy.getLatest().time.secondsAgo
+	deltaTime = (domoticz.data.consumedEnergy.getLatest().time.millisecondsAgo)/1000
 	if (deltaTime < scriptInterval) then
 		domoticz.log("script trigger interval < than set value for scriptInterval (".. scriptInterval .. ")",domoticz.LOG_DEBUG)
 		goto endScript
