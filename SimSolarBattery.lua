@@ -1,6 +1,8 @@
 --version 0.1 02-04-2021: dzVents version of solar battery script
 --version 0.1.1	03-04-2021: fix left behind variable and avoidance of power level > max inverter power level, due to rounding of calculation
---version 0.1.2 04-04-2021: changed a check for latest data storage from seconds to milliseconds to accommodate meters that update every second
+--version 0.1.2 05-04-2021: changed a check for latest data storage from seconds to milliseconds to accommodate meters that update every second
+--version 0.1.3 05-04-2021: Added a check to avoid big deviations in calculation when inverter power level is small while having
+--	also a small script interval. Added more debug logging
 
 --To be created virtual devices in the hardware section of Domoticz:
 	local solarBattery_name = 'Virtual Solar Battery'			-- (1) Virtual 'Custom Sensor' device name for the 'Virtual Solar Battery'. Change axis label to kWh
@@ -136,30 +138,39 @@ return {
 		_.isNumber(domoticz.data.consumedEnergy.getLatest().data)==false or
 		domoticz.data.consumedEnergy.getLatest().data < 0) then
 		domoticz.data.consumedEnergy.add(0)
-		domoticz.log('dzVents variable consumedEnergy was empty or did not contain a number. Now set as 0',domoticz.LOG_ERROR)
+		domoticz.log('dzVents variable consumedEnergy was empty or did not contain a number. Now set as 0',domoticz.LOG_DEBUG)
 	end
 	if (domoticz.data.returnedEnergy.size == 0 or
 		_.isNumber(domoticz.data.returnedEnergy.getLatest().data)==false or
 		domoticz.data.returnedEnergy.getLatest().data < 0) then
 		domoticz.data.returnedEnergy.add(0)
-		domoticz.log('dzVents variable returnedEnergy was empty or did not contain a number. Now set as 0',domoticz.LOG_ERROR)
+		domoticz.log('dzVents variable returnedEnergy was empty or did not contain a number. Now set as 0',domoticz.LOG_DEBUG)
 	end
 
 --give a new virtual devices a start load of 0 kWh and 0 W
 	if solarBattery.sValue == nil then
 		solarBattery.updateCustomSensor(0)
-		domoticz.log('solar battery value is nil en will be updated to 0',domoticz.LOG_ERROR)
+		domoticz.log('solar battery value is nil en will be updated to 0',domoticz.LOG_DEBUG)
 	end
 	if (batteryUsage.usage1 == nil or batteryUsage.return1 == nil) then batteryUsage.updateP1(0,0,0,0,0,0) end
 	if lostEnergy.WhTotal == nil then lostEnergy.updateElectricity(0,0) end
 
-	--Check if scriptInterval value is valid
-	if (scriptInterval <0 or _.isNumber(scriptInterval) == false) then
-		domoticz.log('value for scriptInterval ('.. scriptInterval.. ') is invalid. Script will use P1 update frequency (scriptInterval = 0)',domoticz.LOG_ERROR)
+--Check if scriptInterval value is valid
+	if (_.isNumber(scriptInterval) == false or scriptInterval < 0) then
+		domoticz.log('value for scriptInterval is invalid (not a number, or < 0). Script will use P1 update frequency (scriptInterval = 0)',domoticz.LOG_ERROR)
 		scriptInterval = 0
 	end
 
-	---end of error checking functions ---
+--Check if inverter power level in relation to script interval and the fact that the minimum energy count is 1Wh, is in balance
+	--(example: inverter power = 1800 @ scriptInterval of 1 second = 0,5 Wh.
+	--At 20 seconds ((3600/1800) x (100/10)) = 10Wh +/-1Wh(minimum counter value))
+	-- 10 +/-1 is a +/- 10% deviation
+	local maxDev = 10 --percent
+	if (3600 / battery_inverter_power.value) * (100 / maxDev) > scriptInterval then
+		scriptInterval = _.round ((3600 / battery_inverter_power.value) * (100 / maxDev), 3)
+		domoticz.log('scriptInterval value increased to ' .. scriptInterval .. ' seconds to have a maximum deviation of ' .. maxDev .. ' percent', domoticz.LOG_DEBUG)
+	end
+---end of error checking functions ---
 
 	--check if the script should continue, based on given scriptInterval timer
 	--check timestamp from persistent data
@@ -190,9 +201,19 @@ return {
 
 
 	---check if the dzVents variable is new and if so, fill it with the current meter value
-	if oldConsumedEnergyMeter == 0 then oldConsumedEnergyMeter = newConsumedEnergyMeter end
-	if oldReturnedEnergyMeter == 0 then oldReturnedEnergyMeter = newReturnedEnergyMeter end
+	if oldConsumedEnergyMeter == 0 then
+		domoticz.data.consumedEnergy.add(newConsumedEnergyMeter)
+	end
+	if oldReturnedEnergyMeter == 0 then
+		domoticz.data.returnedEnergy.add(newReturnedEnergyMeter)
+		goto endScript
+	end
 
+	if (oldConsumedEnergyMeter == 0 or oldReturnedEnergyMeter == 0) then
+		domoticz.log('Script is gathering the value for the consumed / produced energy meter for the 1st time. Script will end and be continued at the next interval', domoticz.LOG_DEBUG)
+		goto endScript
+	end
+	
 	---check for error when new value < old value
 	if newConsumedEnergyMeter < oldConsumedEnergyMeter then
 		domoticz.log('New value of consumed enery meter ('.. newConsumedEnergyMeter ..' Wh < previous value of '.. oldConsumedEnergyMeter..' Wh. Script will not continue',domoticz.LOG_ERROR)
@@ -203,9 +224,9 @@ return {
 	end
 
 	---calculate max. Wh that the battery inverter can handle (both directions)
-	maxBbatteryInverterEnergy = battery_inverter_power.value * (domoticz.data.consumedEnergy.getLatest().time.secondsAgo / 3600)
+	maxBbatteryInverterEnergy = battery_inverter_power.value * (domoticz.data.consumedEnergy.getLatest().time.millisecondsAgo / 3600000)
 	domoticz.log('maxBbatteryInverterEnergy = '..battery_inverter_power.value .. ' x (' ..
-	domoticz.data.consumedEnergy.getLatest().time.secondsAgo .. ' / 3600) = ' .. maxBbatteryInverterEnergy .. ' Wh',domoticz.LOG_DEBUG)
+	domoticz.data.consumedEnergy.getLatest().time.secondsAgo .. ' / 3600) = ' .. _.round (maxBbatteryInverterEnergy, 1) .. ' Wh',domoticz.LOG_DEBUG)
 
 	---calculate the energy balance by: consumption - return
 	--a negative value means consumption
@@ -215,7 +236,7 @@ return {
 
 	if energyBalance > maxBbatteryInverterEnergy then
 		inverterLostEnergy = maxBbatteryInverterEnergy - energyBalance
-		domoticz.log('Positive energybalance above max inverter capacity. inverterLostEnergy = '.. maxBbatteryInverterEnergy ..' - ' ..energyBalance .. ' = ' .. inverterLostEnergy, domoticz.LOG_DEBUG)
+		domoticz.log('Positive energybalance above max inverter capacity. inverterLostEnergy = '.. energyBalance  ..' - ' ..maxBbatteryInverterEnergy .. ' = ' .. inverterLostEnergy, domoticz.LOG_DEBUG)
 		energyBalance = maxBbatteryInverterEnergy
 		batteryProdWatt = battery_inverter_power.value
 	elseif energyBalance < (-1 * maxBbatteryInverterEnergy) then -- more consumption than inverter can deliver
@@ -277,8 +298,10 @@ return {
 		end
 		newLostEnergy = inverterLostEnergy
 	end
-	domoticz.log('batteryUsedEnergy = '..batteryUsedEnergy .. 'Wh',domoticz.LOG_DEBUG)
-	domoticz.log('inverterLostEnergy = '..inverterLostEnergy .. 'Wh',domoticz.LOG_DEBUG)
+	domoticz.log('battery Used Energy = '..batteryUsedEnergy .. 'Wh',domoticz.LOG_DEBUG)
+	domoticz.log('battery Prod Energy = '..batteryProdEnergy .. 'Wh',domoticz.LOG_DEBUG)
+	domoticz.log('battery Lost Energy = '..newLostEnergy .. 'Wh',domoticz.LOG_DEBUG)
+	domoticz.log('inverter Lost Energy = '..inverterLostEnergy .. 'Wh',domoticz.LOG_DEBUG)
 	
 --calculate battery power, based on battery energy
 	if batteryUsedWatt == nil then batteryUsedWatt = _.round (batteryUsedEnergy * (3600/deltaTime), 0) end
