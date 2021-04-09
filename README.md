@@ -1,5 +1,5 @@
 # Domoticz Simulated Solar Battery
-LUA script to control a simulated battery for storage and consumption of (self-) generated energy
+a dzVents LUA script to control a simulated battery for storage and consumption of (self-) generated energy
 
 A solar battery is used to balance energy production and consumption. A battery, or 'accumulator', will dampen both peak energy production and consumption. With a battery 'after the meter', more self-generated energy will remain 'in house', avoiding the financial disadvantage in the situation where energy from the grid is more expensive than the reward for energy sent to the grid.
 
