@@ -3,7 +3,7 @@
 --version 0.1.2 05-04-2021: changed a check for latest data storage from seconds to milliseconds to accommodate meters that update every second
 --version 0.1.3 05-04-2021: Added a check to avoid big deviations in calculation when inverter power level is small while having
 --	also a small script interval. Added more debug logging
---version 0.1.4 09-04-2021: Description text fix + little preparation for future release
+--version 0.1.4a 09-04-2021: Description text fix + little preparation for future release
 
 --To be created virtual devices in the hardware section of Domoticz:
 	local solarBattery_name = 'Virtual Solar Battery'			-- (1) Virtual 'Custom Sensor' device name for the 'Virtual Solar Battery'. Change axis label to kWh
@@ -179,6 +179,7 @@ return {
 	deltaTime = (domoticz.data.consumedEnergy.getLatest().time.millisecondsAgo)/1000
 	if (deltaTime < scriptInterval) then
 		domoticz.log("script trigger interval < than set value for scriptInterval (".. scriptInterval .. ")",domoticz.LOG_DEBUG)
+		goto endScript
 	end
 
 
