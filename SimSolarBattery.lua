@@ -6,33 +6,33 @@
 --version 0.1.4b 10-04-2021: Description text fix + little preparation for future release
 --version 0.1.5 11-04-2021: Lost energy due to battery and due to inverter size are now split and only combined during device update
 
---version 0.2	13-04-2021: BREAKING CHANGE: 	-- 'Lost Energy' 'Electric + Instant + Counter' device need to be replaced by a 'P1-meter' device
+--version 0.2a	14-04-2021: BREAKING CHANGE: 	-- 'Lost Energy' 'Electric + Instant + Counter' device need to be replaced by a 'P1-meter' device
 												-- New 'P1-meter' device needs to be added to trace losses in limited battery inverter
 
 --To be created virtual devices in the hardware section of Domoticz:
-	local solarBattery_name = 'Virtual Solar Battery'				-- (1) Virtual 'Custom Sensor' device name for the 'Virtual Solar Battery'. Change axis label to kWh
-	local batteryUsage_name = 'Virtual Solar Battery Usage'			-- (2) Virtual 'P1-meter' device name for monitoring storage in and consumption from the solar battery
-	local lostEnergy_name	 = 'Lost Solar Energy'					-- (3) Virtual 'Electric Instant + Counter' device name for the 'Lost Solar Energy'
-	local lostBattery_name = 'Lost Solar Battery Energy'			-- (3) Virtual 'P1-meter' device name for the 'Lost Solar Battery Energy'
-	local lostInverter_name = 'Lost Solar Battery Inverter Energy'	-- (3) Virtual 'P1-meter' device name for the 'Lost Solar Battery Inverter Energy'
+	local solarBattery_name = 'Virtual Solar Battery'		-- (1) Virtual 'Custom Sensor' device name for the 'Virtual Solar Battery'. Change axis label to kWh
+	local batteryUsage_name = 'Virtual Solar Battery Usage'		-- (2) Virtual 'P1-meter' device name for monitoring storage in and consumption from the solar battery
+	--local lostEnergy_name	 = 'Lost Solar Energy'	(No longer needed, will be removed in later version -- (x) Virtual 'Electric Instant + Counter' device name for the 'Lost Solar Energy'
+	local lostBattery_name = 'Lost Solar Battery Energy'		-- (3) Virtual 'P1-meter' device name for the 'Lost Solar Battery Energy'
+	local lostInverter_name = 'Lost Solar Battery Inverter Energy'	-- (4) Virtual 'P1-meter' device name for the 'Lost Solar Battery Inverter Energy'
 	
 --To be created User Variable in the Setup - More Options - User Variable section:
-	local battery_capacity_name = 'SolarBatteryCapacity'			-- (4) User Variable name for the 'Solar Battery Capacity'. Type 'Integer'. Value in Wh (4kWh battery = '4000')
-	local battery_inverter_power_name = 'SolarBatteryInverterCap'	-- (5) User variable name for the 'Solar Battery Inverter Power'. Type 'Integer'. Value in W
+	local battery_capacity_name = 'SolarBatteryCapacity'		-- (5) User Variable name for the 'Solar Battery Capacity'. Type 'Integer'. Value in Wh (4kWh battery = '4000')
+	local battery_inverter_power_name = 'SolarBatteryInverterCap'	-- (6) User variable name for the 'Solar Battery Inverter Power'. Type 'Integer'. Value in W
 
 --Energy meter(s) management
 	--name the device(s) used for counting energy from/to the grid
 	--when a P1 meter is used for both 'from' and 'to' the grid, fill in this name for both lines! Else, fill in the name for both requested devices
 	--Device name for consumed energy FROM the grid:
-	local consumedEnergyMeter_name = 'Electricity'
+	local consumedEnergyMeter_name = 'Electricity'			--(7)
 	--Device name for delivered energy TO the grid:
-	local returnedEnergyMeter_name = 'Electricity'
+	local returnedEnergyMeter_name = 'Electricity'			--(8)
 	--decide if energy consumption with an empty battery counts as 'lost energy'
-	local emptyBatteryIsLostEnergy = 1 --(1 =  yes, 0 = no)
+	local emptyBatteryIsLostEnergy = 1 --(1 =  yes, 0 = no)		--(9)
 	--decide if energy losses due to limited inverter power count with a full/empty battery
-	local emptyFullBatteryCountLostInverterEnergy = 1 --(1 = yes, 0 = no)
+	local emptyFullBatteryCountLostInverterEnergy = 1 --(1 = yes, 0 = no) --(10)
 	--Interval of running the Script
-	local scriptInterval = 60 --(seconds. Minimum interval depends on update frequency of P1-meter. 0 = P1-meter update frequency)
+	local scriptInterval = 60 --(seconds. Minimum interval depends on update frequency of P1-meter. 0 = P1-meter update frequency) --(11)
 
 
 -- 1 trigger for P1 meter with both consumption and production meter integrated. Otherwise 2 meters
@@ -75,9 +75,9 @@ return {
 	elseif domoticz.utils.deviceExists(batteryUsage_name) == false then
 		domoticz.log('necessary device '.. batteryUsage_name ..'	doesnt exist. Script will end. Please add the device to Domoticz', domoticz.LOG_ERROR)
 		goto endScript
-	elseif domoticz.utils.deviceExists(lostEnergy_name) == false then
-		domoticz.log('necessary device '.. lostEnergy_name ..'	doesnt exist. Script will end. Please add the device to Domoticz', domoticz.LOG_ERROR)
-		goto endScript
+	--elseif domoticz.utils.deviceExists(lostEnergy_name) == false then
+	--	domoticz.log('necessary device '.. lostEnergy_name ..'	doesnt exist. Script will end. Please add the device to Domoticz', domoticz.LOG_ERROR)
+	--	goto endScript
 	elseif domoticz.utils.deviceExists(lostBattery_name) == false then
 		domoticz.log('necessary device '.. lostBattery_name ..'	doesnt exist. Script will end. Please add the device to Domoticz', domoticz.LOG_ERROR)
 		goto endScript
@@ -95,7 +95,7 @@ return {
 --Devices exists, now define devices/variable within Domoticz:
 	local solarBattery = domoticz.devices(solarBattery_name)
 	local batteryUsage = domoticz.devices(batteryUsage_name)
-	local lostEnergy = domoticz.devices(lostEnergy_name)
+	--local lostEnergy = domoticz.devices(lostEnergy_name)
 	local lostBattery = domoticz.devices(lostBattery_name)
 	local lostInverter = domoticz.devices(lostInverter_name)
 	local consumedEnergyMeter = domoticz.devices(consumedEnergyMeter_name)
@@ -137,9 +137,9 @@ return {
 	elseif (batteryUsage.deviceType ~= 'P1 Smart Meter' and batteryUsage.deviceSubType ~= "Energy") then
 		domoticz.log('created device '.. batteryUsage_name ..'	is not of the type P1-meter. Script will end. Please add the correct device(type) to Domoticz', domoticz.LOG_ERROR)
 		goto endScript
-	elseif (lostEnergy.deviceType ~= 'General' and lostEnergy.deviceSubType ~= "kWh") then
-		domoticz.log('created device '.. lostEnergy_name ..'	is not of the type RFXMeter. Script will end. Please add the correct device(type) to Domoticz', domoticz.LOG_ERROR)
-		goto endScript
+	--elseif (lostEnergy.deviceType ~= 'General' and lostEnergy.deviceSubType ~= "kWh") then
+	--	domoticz.log('created device '.. lostEnergy_name ..'	is not of the type RFXMeter. Script will end. Please add the correct device(type) to Domoticz', domoticz.LOG_ERROR)
+	--	goto endScript
 	elseif (lostBattery_name.deviceType ~= 'P1 Smart Meter' and lostBattery.deviceSubType ~= "Energy") then
 		domoticz.log('created device '.. lostBattery_name ..'	is not of the type P1-meter. Script will end. Please add the correct device(type) to Domoticz', domoticz.LOG_ERROR)
 	elseif (lostInverter.deviceType ~= 'P1 Smart Meter' and lostInverter.deviceSubType ~= "Energy") then
@@ -193,7 +193,7 @@ return {
 		domoticz.log('solar battery value is nil en will be updated to 0',domoticz.LOG_DEBUG)
 	end
 	if (batteryUsage.usage1 == nil or batteryUsage.return1 == nil) then batteryUsage.updateP1(0,0,0,0,0,0) end
-	if lostEnergy.WhTotal == nil then lostEnergy.updateElectricity(0,0) end
+	--if lostEnergy.WhTotal == nil then lostEnergy.updateElectricity(0,0) end
 	if (lostBattery.usage1 == nil or lostBattery.return1 == nil) then lostBattery.updateP1(0,0,0,0,0,0) end
 	if (lostInverter.usage1 == nil or lostInverter.return1 == nil) then lostInverter.updateP1(0,0,0,0,0,0) end
 	
