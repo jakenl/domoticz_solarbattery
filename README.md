@@ -12,15 +12,19 @@ For details, please checkout the [Wiki](https://github.com/jakenl/domoticz_solar
 ![battery_dashboard](https://user-images.githubusercontent.com/16058266/115231644-16467200-a116-11eb-863b-c5eb4ff9d6e5.PNG)
 
 ### Solar battery log file
-Interesting analysis: The 5kWh capacity can be seen many months in the year. However,in the summer months the consumption is only 2-3kWh per day, a bigger battery has no value, since also a 20kWh battery would only be used for the same 2-3kWh for many days in a row. in the winter months the production is so low that the full mark of 5kWh is never reached.
+Interesting analysis: The 5kWh capacity limit is reached in many months of the year. However,in the summer months the consumption is only 2-3kWh per day, a bigger battery has no value, since also a (for instance) 20kWh battery would only be used for the same 2-3kWh for many days in a row. in the winter months the production is so low that the full mark of 5kWh is never reached.
 ![battery_level](https://user-images.githubusercontent.com/16058266/115231700-265e5180-a116-11eb-926a-1cd0f1709aca.PNG)
+The graphs show an actual battery level over the last days and a min/avg/max level over the months and year
 
 ### Solar battery usage
-The new virtual P1-meter is only used for 2 (not very energy productive) days. Therefore the simulated inverter power of 1200W is not visible as a flat line at 1200W during peak moments. 
-![battery_usage](https://user-images.githubusercontent.com/16058266/115231744-35dd9a80-a116-11eb-8764-0c65a344c932.PNG)
+![battery_usage](https://user-images.githubusercontent.com/16058266/115233723-8a821500-a118-11eb-9eec-5f629751349d.PNG)
+The graph shows both consuming energy from the battery (usage1) as returning energy to the battery (return1)
 
-### Lost solar energy
-![lost_battery_energy](https://user-images.githubusercontent.com/16058266/115231770-3f670280-a116-11eb-9ea4-c61a68578cea.PNG)
+### Lost solar battery energy
+![lost_battery_energy](https://user-images.githubusercontent.com/16058266/115233629-6f170a00-a118-11eb-97f3-98a16a8520a6.PNG)
+The graph shows both lost energy due to an empty battery (usage1) as due to a full battery (return1). (Mo/Tu the battery was empty). 24hrs ago (1 day) the battery was already full, while the solar system still produced energy.
 
-### Lost inverter energy
-![lost_inverter_energy](https://user-images.githubusercontent.com/16058266/115231843-5574c300-a116-11eb-93da-4e219b7e4561.PNG)
+### Lost solar battery inverter energy
+![lost_inverter_energy](https://user-images.githubusercontent.com/16058266/115233422-2c553200-a118-11eb-9a9a-f97279e141bd.PNG)
+
+
