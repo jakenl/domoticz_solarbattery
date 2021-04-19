@@ -22,5 +22,5 @@ The new virtual P1-meter is only used for 2 (not very energy productive) days. T
 ### Lost solar energy
 ![lost_battery_energy](https://user-images.githubusercontent.com/16058266/115231770-3f670280-a116-11eb-9ea4-c61a68578cea.PNG)
 
-### Lost inverter energy!
-[lost_inverter_energy](https://user-images.githubusercontent.com/16058266/115231843-5574c300-a116-11eb-93da-4e219b7e4561.PNG)
+### Lost inverter energy
+![lost_inverter_energy](https://user-images.githubusercontent.com/16058266/115231843-5574c300-a116-11eb-93da-4e219b7e4561.PNG)
