@@ -9,15 +9,18 @@ For details, please checkout the [Wiki](https://github.com/jakenl/domoticz_solar
 
 ## Screenshots
 ### Solar battery devices
-![devices](https://user-images.githubusercontent.com/16058266/113413398-e7609a00-93ba-11eb-8399-5ba66eaea13d.JPG)
+![battery_dashboard](https://user-images.githubusercontent.com/16058266/115231644-16467200-a116-11eb-863b-c5eb4ff9d6e5.PNG)
 
 ### Solar battery log file
-Interesting analysis: The 5kWh capacity can be seen many months in the year. However,in the summer months the consumption is only 2-3kWh per day, a bigger battery has no value, since also a 20kWh battery would only be used for the same 2-3kWh for many days in a row. in the winter months the production is so low that the full mark is never reached.
-![SolarBattery](https://user-images.githubusercontent.com/16058266/113411981-6fdd3b80-93b7-11eb-9ee9-2101f5e86430.JPG)
+Interesting analysis: The 5kWh capacity can be seen many months in the year. However,in the summer months the consumption is only 2-3kWh per day, a bigger battery has no value, since also a 20kWh battery would only be used for the same 2-3kWh for many days in a row. in the winter months the production is so low that the full mark of 5kWh is never reached.
+![battery_level](https://user-images.githubusercontent.com/16058266/115231700-265e5180-a116-11eb-926a-1cd0f1709aca.PNG)
 
 ### Solar battery usage
-The new virtual P1-meter is only used for 2 (not very energy productive) days. Therefore the simulated inverter power of 1000W is not visible as a flat line at 1000W during peak moments. 
-![SolarBatteryUsage](https://user-images.githubusercontent.com/16058266/113412143-d2363c00-93b7-11eb-8bd6-6ae93dd24833.JPG)
+The new virtual P1-meter is only used for 2 (not very energy productive) days. Therefore the simulated inverter power of 1200W is not visible as a flat line at 1200W during peak moments. 
+![battery_usage](https://user-images.githubusercontent.com/16058266/115231744-35dd9a80-a116-11eb-8764-0c65a344c932.PNG)
 
 ### Lost solar energy
-![LostEnergy](https://user-images.githubusercontent.com/16058266/113412186-e7ab6600-93b7-11eb-8006-456eed20006a.JPG)
+![lost_battery_energy](https://user-images.githubusercontent.com/16058266/115231770-3f670280-a116-11eb-9ea4-c61a68578cea.PNG)
+
+### Lost inverter energy!
+[lost_inverter_energy](https://user-images.githubusercontent.com/16058266/115231843-5574c300-a116-11eb-93da-4e219b7e4561.PNG)
